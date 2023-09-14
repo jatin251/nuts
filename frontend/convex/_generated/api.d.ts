@@ -15,7 +15,10 @@ import type {
   FunctionReference,
 } from "convex/server";
 import type * as auth from "../auth";
+import type * as post from "../post";
+import type * as profile from "../profile";
 import type * as tasks from "../tasks";
+import type * as utils_randChoice from "../utils/randChoice";
 import type * as withAuth from "../withAuth";
 
 /**
@@ -28,7 +31,10 @@ import type * as withAuth from "../withAuth";
  */
 declare const fullApi: ApiFromModules<{
   auth: typeof auth;
+  post: typeof post;
+  profile: typeof profile;
   tasks: typeof tasks;
+  "utils/randChoice": typeof utils_randChoice;
   withAuth: typeof withAuth;
 }>;
 export declare const api: FilterApi<

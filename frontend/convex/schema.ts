@@ -9,6 +9,7 @@ export default defineSchema({
 		audioId: v.string(),
 		comments: v.array(
 			v.object({
+				commentId: v.string(),
 				userId: v.id('users'),
 				comment: v.string()
 			})
@@ -35,7 +36,8 @@ export default defineSchema({
 		.index('by_email', ['email']),
 	sessions: defineTable({
 		sessionId: v.string(),
-		userId: v.id('users')
+		userId: v.id('users'),
+		expiresAt: v.string()
 	})
 		.index('by_userId', ['userId'])
 		.index('sessionId', ['sessionId'])

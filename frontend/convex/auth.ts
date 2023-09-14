@@ -1,8 +1,7 @@
-import { mutation, query } from './_generated/server';
+import { mutation } from './_generated/server';
 import { v } from 'convex/values';
-import { hashSync, genSaltSync } from 'bcryptjs';
-import cryptoRandomString from 'crypto-random-string';
-import { queryWithAuth } from './withAuth';
+import { hashSync, genSaltSync, compareSync } from 'bcryptjs';
+import { createSession, mutationWithAuth } from './withAuth';
 
 export const register = mutation({
 	args: {
@@ -23,14 +22,10 @@ export const register = mutation({
 		});
 
 		// Create session
-		const sessionId = cryptoRandomString({ length: 16, type: 'base64' });
-
-		await ctx.db.insert('sessions', {
-			sessionId: sessionId,
-			userId: createdUserId
-		});
+		const sessionId = createSession(ctx, createdUserId);
 
 		return {
+			success: true,
 			sessionId: sessionId,
 			username: args.username,
 			email: args.email
@@ -44,9 +39,59 @@ export const login = mutation({
 		password: v.string()
 	},
 	handler: async (ctx, args) => {
-		const foundByUsername = await ctx.db
+		// 1. Find user
+		const userFromUsername = await ctx.db
 			.query('users')
-			.filter((user) => user.eq(user.field('username'), args.usernameOrEmail))
+			.withIndex('by_username', (q) => q.eq('username', args.usernameOrEmail))
 			.collect();
+		const userFromEmail = await ctx.db
+			.query('users')
+			.withIndex('by_email', (q) => q.eq('email', args.usernameOrEmail))
+			.collect();
+
+		if (userFromUsername.length === 0 && userFromEmail.length === 0)
+			return {
+				success: false
+			};
+
+		const user = userFromUsername.length === 0 ? userFromEmail[0] : userFromUsername[0];
+
+		// 2. Check password
+		const validPassword = compareSync(args.password, user.password);
+
+		if (!validPassword)
+			return {
+				success: false
+			};
+
+		// 3. Create session
+		const sessionId = createSession(ctx, user._id);
+
+		return {
+			success: true,
+			sessionId: sessionId,
+			username: user.username,
+			email: user.email
+		};
+	}
+});
+
+export const logout = mutationWithAuth({
+	args: {},
+	handler: async (ctx) => {
+		const foundSession = ctx.session;
+
+		if (foundSession) {
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			await ctx.db.delete(foundSession._id);
+
+			return {
+				success: true
+			};
+		}
+
+		return {
+			success: false
+		};
 	}
 });
