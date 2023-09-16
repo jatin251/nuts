@@ -5,7 +5,9 @@
   import { baseButton } from '@/styles/variants';
 </script>
 
-<header class="absolute left-0 right-0 top-0 grid h-[60px] place-items-center">
+<header
+  class="absolute left-0 right-0 top-0 z-50 grid h-[60px] place-items-center"
+>
   <div
     class="pointer-events-none absolute inset-0 bg-gradient-to-b from-white to-transparent"
   />

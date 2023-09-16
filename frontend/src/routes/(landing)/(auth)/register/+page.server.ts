@@ -5,27 +5,29 @@ export const actions: Actions = {
   default: async (event) => {
     const data = await event.request.formData();
 
-    const usernameOrEmail = await data.get('usernameOrEmail');
+    const username = await data.get('username');
+    const email = await data.get('email');
     const password = await data.get('password');
 
-    if (!usernameOrEmail || !password) return { success: false };
+    if (!username || !password || !email) return { success: false };
 
-    const loginResult = await client.mutation(api.auth.login, {
-      usernameOrEmail: usernameOrEmail as string,
+    const registerResult = await client.mutation(api.auth.register, {
+      username: username as string,
+      email: email as string,
       password: password as string
     });
 
     // Set Cookie (For SvelteKit Protected Routes)
-    if (loginResult && loginResult?.session?.sessionId) {
-      event.cookies.set('auth', loginResult.session.sessionId, {
+    if (registerResult && registerResult?.session?.sessionId) {
+      event.cookies.set('auth', registerResult.session.sessionId, {
         path: '/',
         httpOnly: true,
         sameSite: 'strict',
         secure: process.env.NODE_ENV === 'production',
-        maxAge: loginResult.session.maxAge
+        maxAge: registerResult.session.maxAge
       });
     }
 
-    return loginResult;
+    return registerResult;
   }
 };

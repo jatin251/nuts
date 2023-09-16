@@ -3,7 +3,8 @@
   import { onMount } from 'svelte';
 </script>
 
-<div class="flex-1 bg-[#F3F3F3] py-16">
+<div class="flex-1 bg-[#F3F3F3] pb-16">
+  <div class="h-[60px]" />
   <div class="mx-auto flex w-full max-w-lg flex-col gap-y-6 px-9">
     <AudioPlayerCard
       fullName="Carlo Taleon"

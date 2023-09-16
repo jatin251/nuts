@@ -31,13 +31,15 @@ export default defineSchema({
     username: v.string(),
     password: v.string(),
     email: v.string(),
-    isVerified: v.optional(v.boolean())
+    isVerified: v.boolean(),
+    isNewAccount: v.boolean()
   })
     .index('by_username', ['username'])
     .index('by_email', ['email']),
   sessions: defineTable({
     sessionId: v.string(),
     userId: v.id('users'),
+    maxAge: v.number(),
     expiresAt: v.string()
   })
     .index('by_userId', ['userId'])

@@ -2,17 +2,22 @@
   import { enhance } from '$app/forms';
   import { button } from '@/styles/variants';
   import { goto } from '$app/navigation';
-
-  export let form;
-
   import toast from 'svelte-french-toast';
 
-  const FORM_TOASTID = 'LOGIN';
+  // Setting the mode (For layout styles)
+  import { setMode } from '../authLayoutStore';
+  setMode('login-register');
 
+  // Forms
+  export let form;
+  const FORM_TOASTID = 'LOGIN';
   let currentForm;
 
   $: if (form) {
-    if (form?.success === true) {
+    if (form?.success === true && form?.session?.sessionId) {
+      // Save to local storage here
+      localStorage.setItem('resonate-s', form?.session?.sessionId);
+
       toast.success('You have logged in.', { id: FORM_TOASTID });
       goto('/app');
     }
@@ -53,17 +58,17 @@
 </form>
 
 <!-- Simulate the height of the Button -->
-<div class="h-16" />
+<div class="h-40" />
 
 <!-- Make Button Stay at the Bottom for next pages -->
 <div
-  class="fixed bottom-0 left-0 right-0 flex justify-center"
+  class="pointer-events-none fixed bottom-0 left-0 right-0 flex justify-center"
   style="padding-bottom: 10vh;"
 >
   <input
     type="submit"
     form="loginform"
-    class={button({ color: 'secondary' })}
+    class={button({ color: 'secondary', class: 'pointer-events-auto' })}
     value="Login"
   />
 </div>

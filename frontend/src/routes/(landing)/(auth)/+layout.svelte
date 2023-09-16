@@ -13,37 +13,66 @@
       });
     });
   });
+
+  import { authLayoutStore } from './authLayoutStore';
+  import type { Readable } from 'svelte/store';
+
+  let mode: typeof $authLayoutStore.mode;
+
+  $: {
+    mode = $authLayoutStore.mode;
+  }
 </script>
 
-<div class="flex min-h-screen flex-col bg-primary-500">
+<div
+  class={cn(
+    'flex min-h-screen flex-col transition duration-500',
+    { 'bg-primary-500': mode === 'login-register' },
+    { 'bg-white': mode === 'new-account' }
+  )}
+>
   <div class="flex h-full flex-grow items-center">
     <div
       class="mx-auto flex w-full max-w-xl flex-col justify-center gap-y-8 px-9"
     >
       <header>
         <div style="view-transition-name: resonate-logo;">
-          <a href="/"
-            ><h1 class="text-center font-circularstd text-2xl text-white">
+          <a
+            href="/"
+            class={cn({ 'pointer-events-none': mode === 'new-account' })}
+            ><h1
+              class={cn(
+                'text-center font-circularstd text-2xl transition duration-500',
+                { 'text-white': mode === 'login-register' },
+                { 'text-primary-500': mode === 'new-account' }
+              )}
+            >
               Resonate
             </h1></a
           >
         </div>
-        <div class="flex w-full justify-between">
-          <a
-            href="/login"
-            class={cn(
-              { 'opacity-70': $page.url.pathname !== '/login' },
-              'text-white transition duration-300 active:scale-90'
-            )}>Login</a
-          >
-          <a
-            href="/register"
-            class={cn(
-              { 'opacity-70': $page.url.pathname !== '/register' },
-              'text-white transition duration-300 active:scale-90'
-            )}>Create</a
-          >
-        </div>
+        {#if mode === 'login-register'}
+          <div class="flex w-full justify-between">
+            <a
+              href="/login"
+              class={cn(
+                { 'opacity-70': $page.url.pathname !== '/login' },
+                'text-white transition duration-300 active:scale-90'
+              )}>Login</a
+            >
+            <a
+              href="/register"
+              class={cn(
+                { 'opacity-70': $page.url.pathname !== '/register' },
+                'text-white transition duration-300 active:scale-90'
+              )}>Create</a
+            >
+          </div>
+        {:else if mode === 'new-account'}
+          <div class="flex justify-center">
+            🎉 Welcome! But first, who are you?
+          </div>
+        {/if}
       </header>
 
       <!-- Container -->

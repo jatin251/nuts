@@ -1,7 +1,29 @@
 import { mutation } from './_generated/server';
 import { v } from 'convex/values';
 import { hashSync, genSaltSync, compareSync } from 'bcryptjs';
-import { createSession, mutationWithAuth } from './withAuth';
+import { createSession, mutationWithAuth, queryWithAuth } from './withAuth';
+
+export const checkSession = queryWithAuth({
+  args: {},
+  handler: async (ctx) => {
+    // 👆 Query with Auth already checks for session Id
+    // so we can assume this is protected
+
+    const user = await ctx.db.get(ctx.session.userId);
+
+    if (!user)
+      return {
+        success: false,
+        message: "Can't find user related to session."
+      };
+
+    return {
+      success: true,
+      userIsNew: user?.isNewAccount ?? true,
+      message: 'Found user!'
+    };
+  }
+});
 
 export const register = mutation({
   args: {
@@ -18,15 +40,17 @@ export const register = mutation({
     const createdUserId = await ctx.db.insert('users', {
       username: args.username,
       email: args.email,
-      password: hashed_pass
+      password: hashed_pass,
+      isNewAccount: true,
+      isVerified: false
     });
 
     // Create session
-    const sessionId = await createSession(ctx, createdUserId);
+    const session = await createSession(ctx, createdUserId);
 
     return {
       success: true,
-      sessionId: sessionId,
+      session: session,
       username: args.username,
       email: args.email
     };
@@ -66,11 +90,11 @@ export const login = mutation({
       };
 
     // 3. Create session
-    const sessionId = await createSession(ctx, user._id);
+    const session = await createSession(ctx, user._id);
 
     return {
       success: true,
-      sessionId: sessionId,
+      session: session,
       username: user.username,
       email: user.email
     };
@@ -83,7 +107,6 @@ export const logout = mutationWithAuth({
     const foundSession = ctx.session;
 
     if (foundSession) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       await ctx.db.delete(foundSession._id);
 
       return {
