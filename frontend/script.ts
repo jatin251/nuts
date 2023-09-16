@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { ConvexHttpClient } from 'convex/browser';
 import { api } from './convex/_generated/api';
 import * as dotenv from 'dotenv';
@@ -8,34 +9,34 @@ const client = new ConvexHttpClient(process.env['VITE_CONVEX_URL'] || '');
 // Using the client (API methods for queries and mutations)
 
 async function runRegistration() {
-	const registration = await client.mutation(api.auth.register, {
-		email: 'carlo@gmail.com',
-		password: 'carlo123',
-		username: 'carlo'
-	});
+  const registration = await client.mutation(api.auth.register, {
+    email: 'carlo@gmail.com',
+    password: 'carlo123',
+    username: 'carlo'
+  });
 
-	console.log(registration);
+  console.log(registration);
 }
 
 // runRegistration();
 
 async function runLogout() {
-	const result = await client.mutation(api.auth.logout, {
-		sessionId: 'CAhGJv/WpiWC6NVr'
-	});
+  const result = await client.mutation(api.auth.logout, {
+    sessionId: 'CAhGJv/WpiWC6NVr'
+  });
 
-	console.log(result);
+  console.log(result);
 }
 
 // runLogout();
 
 async function runLogin() {
-	const result = await client.mutation(api.auth.login, {
-		usernameOrEmail: 'carlo@gmail.com',
-		password: 'carlo1234'
-	});
+  const result = await client.mutation(api.auth.login, {
+    usernameOrEmail: 'carlo@gmail.com',
+    password: 'carlo123'
+  });
 
-	console.log(result);
+  console.log(result);
 }
 
 runLogin();
