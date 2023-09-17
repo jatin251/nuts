@@ -4,7 +4,7 @@ import { api } from './convex/_generated/api';
 import * as dotenv from 'dotenv';
 dotenv.config({ path: '.env.local' });
 
-const client = new ConvexHttpClient(process.env['VITE_CONVEX_URL'] || '');
+const client = new ConvexHttpClient(process.env['PUBLIC_CONVEX_URL'] || '');
 
 // Using the client (API methods for queries and mutations)
 

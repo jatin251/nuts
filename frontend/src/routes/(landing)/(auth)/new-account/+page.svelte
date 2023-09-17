@@ -1,10 +1,26 @@
-<script>
+<script lang="ts">
   import { enhance } from '$app/forms';
   import { setMode } from '../authLayoutStore';
   import toast from 'svelte-french-toast';
   import { button } from '@/styles/variants';
   import FileDrop from '@/components/FileDrop.svelte';
+
   setMode('new-account');
+
+  import { api, client } from '$lib/convexClient';
+
+  // @ts-ignore
+  let sessionId: any;
+
+  onMount(async () => {
+    sessionId = await client.query(api.auth.checkSession, {
+      sessionId: localStorage.getItem('resonate-s') || ''
+    });
+  });
+
+  // client.mutation(api.upload.generateUploadUrl, {
+  //   sessionId:
+  // });
 
   // Forms
   // export let form;
@@ -31,10 +47,13 @@
     minLength,
     required
   } from 'svelte-use-form';
+  import AudioRecorder from '@/components/AudioRecorder.svelte';
+  import { onMount } from 'svelte';
 
   const form = useForm();
 </script>
 
+<div>{JSON.stringify(sessionId)}</div>
 <form
   class="flex flex-col gap-y-8"
   method="POST"
@@ -51,10 +70,15 @@
     <input
       type="text"
       class="border-b-2 border-gray-800 bg-transparent pb-2 text-xl text-gray-800 outline-none placeholder:text-gray-800/50"
-      placeholder="Enter username or email"
+      placeholder="Carlo Taleon"
       name="fullName"
-      use:validators={[required]}
+      autocomplete="off"
+      use:validators={[required, minLength(3)]}
     />
+    <Hint for="fullName" on="minLength" let:value class="text-red-400">
+      Your Full Name requires at least {value} characters.
+    </Hint>
+    <Hint for="fullName" on="required" class="text-red-400">Required.</Hint>
   </div>
 
   <div class="flex flex-col">
@@ -64,39 +88,36 @@
     <input
       type="text"
       class="border-b-2 border-gray-800 bg-transparent pb-2 text-xl text-gray-800 outline-none placeholder:text-gray-800/50"
-      placeholder="Enter username or email"
+      placeholder="Awesome Engineer"
+      autocomplete="off"
       name="oneLiner"
-      use:validators={[required]}
+      use:validators={[required, minLength(3)]}
     />
+    <Hint for="oneLiner" on="minLength" let:value class="text-red-400">
+      Your One-Liner requires at least {value} characters.
+    </Hint>
+    <Hint for="oneLiner" on="required" class="text-red-400">Required.</Hint>
   </div>
 
   <div class="flex flex-col gap-y-3">
     <h2 class="font-productsans text-2xl font-semibold text-gray-800">
       Profile Picture
     </h2>
-    <FileDrop id="myfiledrop" class="h-60" />
-    <!-- <input
-      type="text"
-      class="border-b-2 border-gray-800 bg-transparent pb-2 text-xl text-gray-800 outline-none placeholder:text-gray-800/50"
-      placeholder="Enter password"
-      name="profilePicture"
-    /> -->
+    <FileDrop id="myfiledrop" class="h-60" name="profilePictureId" required />
+    <Hint for="profilePictureId" on="required" class="text-red-400"
+      >Required.</Hint
+    >
   </div>
 
   <div class="flex flex-col">
     <h2 class="font-productsans text-2xl font-semibold text-gray-800">
       Audio Bio
     </h2>
-    <input
-      type="text"
-      class="border-b-2 border-gray-800 bg-transparent pb-2 text-xl text-gray-800 outline-none placeholder:text-gray-800/50"
-      placeholder="Enter password"
-      name="profilePicture"
-    />
   </div>
-</form>
+  <AudioRecorder name="audioBioId" required />
 
-<div>{$form.valid ? 'Yes' : 'No'}</div>
+  {JSON.stringify($form.values)}
+</form>
 
 <!-- Simulate the height of the Button -->
 <div class="h-40" />
@@ -110,7 +131,8 @@
     type="submit"
     form="loginform"
     class={button({
-      class: 'pointer-events-auto cursor-not-allowed disabled:opacity-50'
+      class:
+        'pointer-events-auto cursor-not-allowed disabled:opacity-50 disabled:grayscale'
     })}
     value="Get Started"
     disabled={!$form.valid}
