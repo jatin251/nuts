@@ -11,20 +11,29 @@
     timeline,
     type TimelineDefinition
   } from 'motion';
+  import { blobToFile } from '@/lib/blobToFile';
+  import {
+    validators,
+    type Validator,
+    type ValidatorsActionError
+  } from 'svelte-use-form';
 
   //   +--- Deferred Variables ---+
   let stream: MediaStream | undefined;
   let media: any[] = [];
   let mediaRecorder: MediaRecorder | undefined;
   let finalAudioSrc: string | undefined;
-
   let animation: AnimationControls | undefined;
 
   // +--- Props ---+
   export let id: string = 'mic-button';
+  export let onRecordComplete: (audioFile: File) => void;
+  let formValidators: Validator[] = [];
+  export { formValidators as validators };
 
   // +--- State ---+
   let recording = false;
+  $: value = finalAudioSrc;
 
   // +--- Constants ---+
   let sequence: TimelineDefinition = [
@@ -57,6 +66,9 @@
     mediaRecorder.onstop = function (m) {
       const blob = new Blob(media, { type: 'audio/ogg; codecs=opus' });
       finalAudioSrc = window.URL.createObjectURL(blob);
+
+      const file = blobToFile(blob, 'audio-bio.moggp3');
+      onRecordComplete?.(file);
     };
 
     mediaRecorder.start();
@@ -93,7 +105,13 @@
   >
 
   <!-- Invisible Input -->
-  <input type="text" class="hidden" {...$$restProps} />
+  <input
+    type="text"
+    class="hidden"
+    bind:value
+    use:validators={formValidators}
+    {...$$restProps}
+  />
   <!-- Audio UI -->
   <div class="relative w-full">
     <audio

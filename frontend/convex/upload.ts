@@ -1,8 +1,14 @@
+import { ResponseStatus } from './responseStatuses';
 import { mutationWithAuth } from './withAuth';
 
 export const generateUploadUrl = mutationWithAuth({
   args: {},
   handler: async (ctx) => {
-    return await ctx.storage.generateUploadUrl();
+    const uploadUrl = await ctx.storage.generateUploadUrl();
+
+    return {
+      status: ResponseStatus.Success,
+      uploadUrl: uploadUrl
+    };
   }
 });

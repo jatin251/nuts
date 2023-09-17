@@ -13,7 +13,7 @@
   />
   <a
     href="/app"
-    class="relative touch-none font-circularstd text-[16px] font-medium"
+    class="relative touch-none font-circularstd text-[16px] font-semibold"
     >Resonate</a
   >
 </header>

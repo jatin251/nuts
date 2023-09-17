@@ -2,6 +2,7 @@ import { mutation } from './_generated/server';
 import { v } from 'convex/values';
 import { hashSync, genSaltSync, compareSync } from 'bcryptjs';
 import { createSession, mutationWithAuth, queryWithAuth } from './withAuth';
+import { ResponseStatus } from './responseStatuses';
 
 export const checkSession = queryWithAuth({
   args: {},
@@ -13,14 +14,13 @@ export const checkSession = queryWithAuth({
 
     if (!user)
       return {
-        success: false,
+        status: ResponseStatus.Fail,
         message: "Can't find user related to session."
       };
 
     return {
-      success: true,
-      userIsNew: user?.isNewAccount ?? true,
-      message: 'Found user!'
+      status: ResponseStatus.Success,
+      userIsNew: user?.isNewAccount ?? (true as boolean)
     };
   }
 });
@@ -49,7 +49,7 @@ export const register = mutation({
     const session = await createSession(ctx, createdUserId);
 
     return {
-      success: true,
+      status: ResponseStatus.Success,
       session: session,
       username: args.username,
       email: args.email
@@ -75,7 +75,8 @@ export const login = mutation({
 
     if (userFromUsername.length === 0 && userFromEmail.length === 0)
       return {
-        success: false
+        status: ResponseStatus.Fail,
+        message: 'Invalid credentials.'
       };
 
     const user =
@@ -86,14 +87,15 @@ export const login = mutation({
 
     if (!validPassword)
       return {
-        success: false
+        status: ResponseStatus.Fail,
+        message: 'Invalid credentials.'
       };
 
     // 3. Create session
     const session = await createSession(ctx, user._id);
 
     return {
-      success: true,
+      status: ResponseStatus.Success,
       session: session,
       username: user.username,
       email: user.email
@@ -110,12 +112,12 @@ export const logout = mutationWithAuth({
       await ctx.db.delete(foundSession._id);
 
       return {
-        success: true
+        status: ResponseStatus.Success
       };
     }
 
     return {
-      success: false
+      status: ResponseStatus.Fail
     };
   }
 });

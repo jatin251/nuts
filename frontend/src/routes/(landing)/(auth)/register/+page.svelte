@@ -12,24 +12,22 @@
 
   export let form;
   const FORM_TOASTID = 'REGISTER';
-  let currentForm;
 
   $: if (form) {
-    if (form?.success === true && form?.session?.sessionId) {
+    if (form.status === 'Success' && form?.session?.sessionId) {
       // Save to local storage here
       localStorage.setItem('resonate-s', form?.session?.sessionId);
 
-      toast.success('Successfully created account.', { id: FORM_TOASTID });
+      toast.success('Credentials created!', { id: FORM_TOASTID });
       goto('/new-account');
     }
     if (form?.success === false) {
-      toast.error('Failed to create account.', { id: FORM_TOASTID });
+      toast.error('Failed to register.', { id: FORM_TOASTID });
     }
   }
 </script>
 
 <form
-  bind:this={currentForm}
   class="flex flex-col gap-y-8"
   method="POST"
   id="registerform"

@@ -2,6 +2,7 @@ import { Doc, Id } from './_generated/dataModel';
 import { MutationCtx, QueryCtx, mutation, query } from './_generated/server';
 import { ObjectType, PropertyValidators, v } from 'convex/values';
 import cryptoRandomString from 'crypto-random-string';
+import { ResponseStatus } from './responseStatuses';
 
 export async function getSession(
   ctx: QueryCtx | MutationCtx,
@@ -68,12 +69,12 @@ export function queryWithAuth<
 
       if (!session)
         return {
-          success: false,
+          status: ResponseStatus.Fail,
           message: 'No user session found. Please login.'
         };
       if (sessionExpired(session.expiresAt))
         return {
-          success: false,
+          status: ResponseStatus.Fail,
           message: 'Session has expired.'
         };
 
@@ -102,12 +103,12 @@ export function mutationWithAuth<
 
       if (!session)
         return {
-          success: false,
+          status: ResponseStatus.Fail,
           message: 'No user session found. Please login.'
         };
       if (sessionExpired(session.expiresAt))
         return {
-          success: false,
+          status: ResponseStatus.Fail,
           message: 'Session has expired.'
         };
 

@@ -17,6 +17,7 @@ import type {
 import type * as auth from "../auth";
 import type * as post from "../post";
 import type * as profile from "../profile";
+import type * as responseStatuses from "../responseStatuses";
 import type * as tasks from "../tasks";
 import type * as upload from "../upload";
 import type * as utils_randChoice from "../utils/randChoice";
@@ -34,6 +35,7 @@ declare const fullApi: ApiFromModules<{
   auth: typeof auth;
   post: typeof post;
   profile: typeof profile;
+  responseStatuses: typeof responseStatuses;
   tasks: typeof tasks;
   upload: typeof upload;
   "utils/randChoice": typeof utils_randChoice;

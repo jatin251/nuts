@@ -1,5 +1,6 @@
 import { redirect, type RequestEvent } from '@sveltejs/kit';
 import { api, client } from '../convexClient';
+import { ResponseStatus } from '../../../convex/responseStatuses';
 
 export const handleProtectedRoute = async (
   event: RequestEvent,
@@ -24,12 +25,21 @@ export const handleProtectedRoute = async (
     throw redirect(302, `/login?${url.searchParams}`);
   }
 
-  const castedSession = session as {
-    success: boolean;
-    userIsNew: boolean;
-    message: string;
-  };
+  if (session.status === ResponseStatus.Fail)
+    throw redirect(302, `/login?${url.searchParams}`);
 
-  if (castedSession.userIsNew && event.url.pathname !== '/new-account')
+  if (
+    session.status === ResponseStatus.Success &&
+    session.userIsNew &&
+    event.url.pathname !== '/new-account'
+  )
     throw redirect(302, `/new-account`);
+
+  if (
+    session.status === ResponseStatus.Success &&
+    !session.userIsNew &&
+    event.url.pathname === '/new-account'
+  ) {
+    throw redirect(302, '/app');
+  }
 };

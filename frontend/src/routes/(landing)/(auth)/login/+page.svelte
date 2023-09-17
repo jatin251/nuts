@@ -3,6 +3,7 @@
   import { button } from '@/styles/variants';
   import { goto } from '$app/navigation';
   import toast from 'svelte-french-toast';
+  import IconError from '~icons/material-symbols/error-outline';
 
   // Setting the mode (For layout styles)
   import { setMode } from '../authLayoutStore';
@@ -11,10 +12,9 @@
   // Forms
   export let form;
   const FORM_TOASTID = 'LOGIN';
-  let currentForm;
 
   $: if (form) {
-    if (form?.success === true && form?.session?.sessionId) {
+    if (form.status === 'Success' && form?.session?.sessionId) {
       // Save to local storage here
       localStorage.setItem('resonate-s', form?.session?.sessionId);
 
@@ -25,10 +25,19 @@
       toast.error('Failed to login.', { id: FORM_TOASTID });
     }
   }
+
+  import { page } from '$app/stores';
+  const message = $page.url.searchParams.get('message');
 </script>
 
+{#if message}
+  <div
+    class="mb-5 flex items-center justify-center gap-x-2 rounded-md border-2 border-red-300 bg-red-500 px-3 py-6 text-white"
+  >
+    <IconError /> <span>{message}</span>
+  </div>
+{/if}
 <form
-  bind:this={currentForm}
   class="flex flex-col gap-y-8"
   method="POST"
   id="loginform"

@@ -31,10 +31,8 @@
     { 'bg-white': mode === 'new-account' }
   )}
 >
-  <div class="flex h-full flex-grow items-center">
-    <div
-      class="mx-auto flex w-full max-w-xl flex-col justify-center gap-y-8 px-9"
-    >
+  <div class="flex h-full flex-grow">
+    <div class="mx-auto flex w-full max-w-xl flex-col gap-y-8 px-9 pt-16">
       <header>
         <div style="view-transition-name: resonate-logo;">
           <a

@@ -2,12 +2,12 @@ import { tv } from 'tailwind-variants';
 
 /** Completely unstyled button, only with the right accessibility styles. */
 export const baseButton = tv({
-  base: 'block cursor-pointer touch-none select-none outline-primary-200 active:scale-95'
+  base: 'block cursor-pointer touch-none select-none outline-primary-200'
 });
 
 /** General Rounded Buttons. */
 export const button = tv({
-  base: 'transform rounded-full font-circularstd shadow transition',
+  base: 'transform rounded-full font-circularstd shadow transition active:scale-95',
   extend: baseButton,
   variants: {
     color: {
@@ -15,6 +15,7 @@ export const button = tv({
       secondary: 'bg-white text-primary-500'
     },
     size: {
+      base: 'px-5 py-3 text-base',
       lg: 'px-20 py-4 text-2xl'
     }
   },
