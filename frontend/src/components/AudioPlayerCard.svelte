@@ -23,7 +23,11 @@
 
 <card class="flex flex-col gap-y-[10px]">
   <header class="flex gap-x-3">
-    <img src={profilePictureUrl} alt={username} class="h-9 w-9 rounded-full" />
+    <img
+      src={profilePictureUrl}
+      alt={username}
+      class="h-9 w-9 rounded-full object-cover"
+    />
     <div class="flex flex-col">
       <div class="flex items-center gap-x-1">
         <h2 class="font-circularstd font-medium">{fullName}</h2>
@@ -35,7 +39,7 @@
     </div>
   </header>
   <div
-    class="shadow-primary flex flex-col gap-y-[10px] rounded-md bg-white p-4"
+    class="flex flex-col gap-y-[10px] rounded-md bg-white p-4 shadow-primary"
   >
     <header class="flex justify-between">
       <div class="flex gap-x-3">

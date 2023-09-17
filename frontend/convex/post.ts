@@ -25,6 +25,39 @@ export const get = queryWithAuth({
   }
 });
 
+export const create = mutationWithAuth({
+  args: {
+    emojiTag: v.string(),
+    audioId: v.string(),
+    caption: v.string()
+  },
+  handler: async (ctx, args) => {
+    const createdPostId = await ctx.db.insert('posts', {
+      emojiTag: args.emojiTag,
+      comments: [],
+      audioId: args.audioId,
+      likerIds: [],
+      likes: 0,
+      userId: ctx.session.userId,
+      caption: args.caption,
+      _lastModified: new Date().toISOString()
+    });
+
+    const createdPost = await ctx.db.get(createdPostId);
+
+    if (!createdPost)
+      return {
+        status: ResponseStatus.Fail,
+        message: 'Could not create post.'
+      };
+
+    return {
+      status: ResponseStatus.Success,
+      post: createdPost
+    };
+  }
+});
+
 export const likePost = mutationWithAuth({
   args: {
     postId: v.id('posts'),

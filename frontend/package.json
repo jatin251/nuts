@@ -54,6 +54,7 @@
 		"motion": "^10.16.2",
 		"nanoid": "^5.0.1",
 		"svelte-french-toast": "^1.2.0",
+		"svelte-modals": "^1.3.0",
 		"svelte-use-form": "^2.9.1",
 		"tailwind-variants": "^0.1.14",
 		"wavesurfer.js": "^7.3.2"

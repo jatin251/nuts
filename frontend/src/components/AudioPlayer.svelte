@@ -37,8 +37,6 @@
     wavesurfer.on('loading', (percent) => {
       loadingPercent = percent;
     });
-
-    wavesurfer.getDecodedData();
   });
 
   let playing = false;

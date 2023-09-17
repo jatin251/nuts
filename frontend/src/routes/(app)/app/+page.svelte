@@ -1,11 +1,14 @@
 <script lang="ts">
   import AudioPlayerCard from '@/components/AudioPlayerCard.svelte';
+  import AudioRecorder from '@/components/AudioRecorder.svelte';
+  import NewPostRecorder from '@/components/NewPostRecorder.svelte';
   import { onMount } from 'svelte';
 </script>
 
 <div class="flex-1 bg-[#F3F3F3] pb-16">
   <div class="h-[60px]" />
   <div class="mx-auto flex w-full max-w-lg flex-col gap-y-6 px-9">
+    <NewPostRecorder />
     <AudioPlayerCard
       fullName="Carlo Taleon"
       verified={true}

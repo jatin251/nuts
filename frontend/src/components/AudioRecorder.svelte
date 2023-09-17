@@ -1,10 +1,10 @@
 <script lang="ts">
   // Icons
   import IconMicrophone from '~icons/solar/microphone-3-bold';
+
   import { baseButton } from '@/styles/variants';
   import cn from '@/lib/cx';
-
-  import { onMount } from 'svelte';
+  import { onDestroy, onMount } from 'svelte';
   import {
     spring,
     type AnimationControls,
@@ -12,11 +12,6 @@
     type TimelineDefinition
   } from 'motion';
   import { blobToFile } from '@/lib/blobToFile';
-  import {
-    validators,
-    type Validator,
-    type ValidatorsActionError
-  } from 'svelte-use-form';
 
   //   +--- Deferred Variables ---+
   let stream: MediaStream | undefined;
@@ -25,13 +20,20 @@
   let finalAudioSrc: string | undefined;
   let animation: AnimationControls | undefined;
 
+  let limitterTimeoutId: ReturnType<typeof setTimeout>;
+  let progressIntervalId: ReturnType<typeof setInterval>;
+
   // +--- Props ---+
   export let id: string = 'mic-button';
+  /** This is in seconds */
+  export let recordTimeLimit: number = 60;
+  export let buttonOnly: boolean = false;
   export let onRecordComplete: (audioFile: File) => void;
-  let formValidators: Validator[] = [];
-  export { formValidators as validators };
+  export let onRecordStart: () => void = () => {};
+  export let onRecordProgress: (currentSecond: number) => void = () => {};
 
   // +--- State ---+
+  let recordProgress: number = 0;
   let recording = false;
   $: value = finalAudioSrc;
 
@@ -47,6 +49,7 @@
     [`#${id}`, { scale: [1.2, 1] }, { easing: spring({ stiffness: 1 }) }]
   ];
 
+  // +--- Initialize ---+
   onMount(() => {
     animation = timeline(sequence, { duration: 1.5, repeat: Infinity });
     animation.stop();
@@ -58,7 +61,29 @@
     else startRecording();
   }
 
+  function startTimers() {
+    recordProgress = 0;
+
+    // Run interval if the consumer wants to listen to the current time recording.
+    onRecordProgress?.(recordProgress); // First exec, then interval is second.
+    progressIntervalId = setInterval(() => {
+      recordProgress = recordProgress + 1;
+      onRecordProgress?.(recordProgress);
+    }, 1000);
+
+    // Run the limitter
+    limitterTimeoutId = setTimeout(() => {
+      stopRecording?.();
+    }, recordTimeLimit * 1000);
+  }
+
+  function stopTimers() {
+    if (limitterTimeoutId) clearTimeout(limitterTimeoutId);
+    if (progressIntervalId) clearInterval(progressIntervalId);
+  }
+
   async function startRecording() {
+    onRecordStart?.();
     media = [];
     stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     mediaRecorder = new MediaRecorder(stream);
@@ -74,6 +99,7 @@
     mediaRecorder.start();
     animation?.play();
     recording = true;
+    startTimers();
   }
 
   function stopRecording() {
@@ -85,7 +111,12 @@
     });
     recording = false;
     animation?.pause();
+    stopTimers();
   }
+
+  onDestroy(() => {
+    stopTimers();
+  });
 </script>
 
 <!-- @component An Audio Recorder input component
@@ -105,15 +136,9 @@
   >
 
   <!-- Invisible Input -->
-  <input
-    type="text"
-    class="hidden"
-    bind:value
-    use:validators={formValidators}
-    {...$$restProps}
-  />
+  <input type="text" class="hidden" bind:value {...$$restProps} />
   <!-- Audio UI -->
-  <div class="relative w-full">
+  <div class={cn('relative w-full', buttonOnly ? 'hidden' : '')}>
     <audio
       id="{id}-recorded-audio"
       controls
