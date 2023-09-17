@@ -5,13 +5,18 @@
   import { animate, inView, spring } from 'motion';
   import { onDestroy, onMount } from 'svelte';
   import { closeModal } from 'svelte-modals';
-  import { baseButton, button } from '@/styles/variants';
+  import { audioPlayerCard, baseButton, button } from '@/styles/variants';
   import AudioPlayerCard from '../AudioPlayerCard.svelte';
+  import EditableAudioPlayerCard from '../EditableAudioPlayerCard.svelte';
 
   // provided by <Modals />
   export let isOpen: boolean;
   export let audioFile: File;
-  export let audioURL: string;
+  export let audioUrl: string;
+
+  // State to change
+  let title: string = '';
+  let emojiTag: string = '🍀';
 
   onMount(() => {
     let animation = animate(
@@ -42,7 +47,7 @@
     <div
       class="mx-9 contents w-full max-w-lg rounded-xl border-2 border-primary-200 bg-primary-500 p-6"
     >
-      <header class="flex justify-between">
+      <header class="mb-5 flex justify-between">
         <h2>{''}</h2>
         <button
           on:click={onClose}
@@ -51,15 +56,18 @@
           })}><IconClose font-size="25" /></button
         >
       </header>
-      <AudioPlayerCard
+      <!-- <AudioPlayerCard
         emojiTag=""
         fullName="Carlo"
         username="carlo"
         id="modal-audio-player"
         profilePictureUrl="https://encrypted-tbn2.gstatic.com/licensed-image?q=tbn:ANd9GcT6mjro1-LzvcDDVIzs4NhPaoPLyUR0jgUT8eG5XsmMTCXNBY22CIbWP59kfGhWAhJKczpk8oQAfZrVd_M"
         title="Some thing wong"
-        audioUrl={audioURL}
-      />
+        {audioUrl}
+        verified
+        variants={{ color: 'secondary' }}
+      /> -->
+      <EditableAudioPlayerCard {audioUrl} {emojiTag} {title} />
       <button class={button({ color: 'secondary', class: 'mt-5' })}>Post</button
       >
     </div>

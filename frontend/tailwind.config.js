@@ -1,3 +1,5 @@
+import customPlugin from './src/styles/customPlugin';
+
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ['./src/**/*.{html,js,svelte,ts}'],
@@ -25,7 +27,7 @@ export default {
       }
     }
   },
-  plugins: [],
+  plugins: [customPlugin],
   future: {
     hoverOnlyWhenSupported: true
   }

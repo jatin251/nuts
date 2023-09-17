@@ -44,3 +44,9 @@ body {
   background-color: #95ffe5;
   color: #42d6b2;
 }
+
+/* Tippy */
+.tippy-box[data-theme~='transparent'] {
+  background-color: transparent;
+  color: transparent;
+}

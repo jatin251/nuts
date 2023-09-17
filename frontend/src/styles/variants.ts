@@ -25,3 +25,21 @@ export const button = tv({
     rounded: 'full'
   }
 });
+
+/** The audio playing element */
+export const audioPlayerCard = tv({
+  slots: {
+    headerFullname: '',
+    headerIconVerified: 'text-primary-500',
+    headerUsername: 'text-primary-400'
+  },
+  variants: {
+    color: {
+      secondary: {
+        headerFullname: 'text-white',
+        headerIconVerified: 'text-white',
+        headerUsername: 'text-primary-200'
+      }
+    }
+  }
+});

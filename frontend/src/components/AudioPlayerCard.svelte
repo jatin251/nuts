@@ -8,7 +8,8 @@
 
   import AudioPlayer from './AudioPlayer.svelte';
   import classNames from 'classnames';
-  import { baseButton } from '@/styles/variants';
+  import { audioPlayerCard, baseButton } from '@/styles/variants';
+  import type { VariantProps } from 'tailwind-variants';
 
   export let verified: boolean = false;
   export let fullName: string;
@@ -19,6 +20,13 @@
   export let title: string;
   export let audioUrl: string;
   export let lastModified: string = '2023-09-10';
+
+  export let variants: VariantProps<typeof audioPlayerCard> | undefined =
+    undefined;
+
+  // Slots
+  const { headerFullname, headerIconVerified, headerUsername } =
+    audioPlayerCard(variants);
 </script>
 
 <card class="flex flex-col gap-y-[10px]">
@@ -30,12 +38,14 @@
     />
     <div class="flex flex-col">
       <div class="flex items-center gap-x-1">
-        <h2 class="font-circularstd font-medium">{fullName}</h2>
+        <h2 class={headerFullname({ class: 'font-circularstd font-medium' })}>
+          {fullName}
+        </h2>
         {#if verified}
-          <IconVerified class="text-primary-500" />
+          <IconVerified class={headerIconVerified()} />
         {/if}
       </div>
-      <p class="text-xs text-primary-400">@{username}</p>
+      <p class={headerUsername({ class: 'text-xs' })}>@{username}</p>
     </div>
   </header>
   <div

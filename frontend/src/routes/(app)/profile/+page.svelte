@@ -8,6 +8,8 @@
   import { button } from '@/styles/variants';
   import { onMount } from 'svelte';
   import dayjs from 'dayjs';
+  import relativeTime from 'dayjs/plugin/relativeTime';
+  dayjs.extend(relativeTime);
   import AudioPlayer from '@/components/AudioPlayer.svelte';
   import { goto } from '$app/navigation';
   import toast from 'svelte-french-toast';
@@ -56,7 +58,7 @@
             <IconVerified class="text-primary-500" font-size={20} />
           {/if}
         </div>
-        {#if profile}
+        {#if profile?.joinDate}
           <div class="text-sm text-primary-400">
             Joined {dayjs(profile?.joinDate)?.fromNow()}
           </div>

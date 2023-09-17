@@ -30,7 +30,7 @@
       emojiTag={'🚀'}
       audioUrl="https://blog-static.fengkx.top/svelte-aplayer/bakemonogatari-ed.mp3"
     />
-    <AudioPlayerCard
+    <!-- <AudioPlayerCard
       fullName="The Jed"
       verified={true}
       profilePictureUrl="https://avatars.githubusercontent.com/u/59909864?v=4"
@@ -51,6 +51,6 @@
       title="Nice"
       emojiTag={'😢'}
       audioUrl="https://blog-static.fengkx.top/svelte-aplayer/bakemonogatari-ed.mp3"
-    />
+    /> -->
   </div>
 </div>

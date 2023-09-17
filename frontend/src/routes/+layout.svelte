@@ -5,6 +5,7 @@
 
   import '@/styles/app.css';
   import '@/styles/nprogress.css';
+  import 'tippy.js/dist/tippy.css';
 
   import { navigating } from '$app/stores';
 
