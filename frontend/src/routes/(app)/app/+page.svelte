@@ -170,11 +170,6 @@
 
   onMount(() => {
     // Will fetch new posts using intersection observer.
-    inView('#post-loader', () => {
-      console.log('Nice');
-      // if (!$postsQuery.isLoading && !isDone) $postsQuery.fetchNextPage();
-    });
-
     scroll(
       ({ y }) => {
         if (

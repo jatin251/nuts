@@ -1,7 +1,6 @@
 <script lang="ts">
   import { Toaster } from 'svelte-french-toast';
   import { onNavigate } from '$app/navigation';
-  import { start, done } from 'nprogress';
 
   import '@/styles/app.css';
   import '@/styles/nprogress.css';
@@ -9,15 +8,17 @@
 
   import { navigating } from '$app/stores';
 
-  $: {
+  onMount(async () => {
+    const Nprogress = await import('nprogress');
     if ($navigating) {
-      start();
-    } else done();
-  }
+      Nprogress.start();
+    } else Nprogress.done();
+  });
 
   // +--- Svelte Query ---+
   import { browser } from '$app/environment';
   import { QueryClient, QueryClientProvider } from '@tanstack/svelte-query';
+  import { onMount } from 'svelte';
 
   const queryClient = new QueryClient({
     defaultOptions: {

@@ -47,8 +47,6 @@
   $: postsQuery = createQuery({
     queryKey: ['random-profile-posts'],
     queryFn: async () => {
-      console.log($profileQuery?.data?._id);
-
       const sessionId = getSessionId();
       if (!sessionId) return;
 
