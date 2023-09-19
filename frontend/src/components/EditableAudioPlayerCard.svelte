@@ -3,11 +3,13 @@
 
   import { baseButton } from '@/styles/variants';
   import AudioPlayer from './AudioPlayer.svelte';
-  import classNames from 'classnames';
+  import { dayjs } from '@/lib/relativeDayjs';
 
+  // Props
   export let title: string;
   export let emojiTag: string;
   export let audioUrl: string;
+  export let creationTimeLabel: string = dayjs().fromNow();
   export let id: string = 'new-audio-post';
 
   //   +--- Element Bindings ---+
@@ -64,7 +66,9 @@
   <div class="px-3">
     <AudioPlayer {id} {audioUrl} />
   </div>
-  <footer class="h-4 text-xs font-thin text-gray-300">Just now</footer>
+  <footer class="h-4 text-xs font-thin text-gray-300">
+    {creationTimeLabel}
+  </footer>
 </div>
 
 <style>

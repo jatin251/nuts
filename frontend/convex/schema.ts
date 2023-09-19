@@ -17,7 +17,7 @@ export default defineSchema({
     /** written count for optimized query. */
     likes: v.number(),
     likerIds: v.array(v.id('users')),
-    _lastModified: v.string()
+    lastModified: v.string()
   }).index('by_userId', ['userId']),
   friends: defineTable({
     first: v.id('users'),

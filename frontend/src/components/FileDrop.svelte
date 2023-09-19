@@ -10,6 +10,7 @@
   import cn from '@/lib/cx';
   import toast from 'svelte-french-toast';
   import { validators, type Validator } from 'svelte-use-form';
+  import { baseButton } from '@/styles/variants';
 
   // +--- Props ---+
   export let id: string;
@@ -88,8 +89,8 @@
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->
-<div
-  class={cn('relative', className)}
+<button
+  class={baseButton({ class: ['group relative', className] })}
   on:dragover|preventDefault
   on:drop={dropHandler}
   on:dragenter={(ev) => {
@@ -104,7 +105,7 @@
 >
   <div
     class={cn(
-      'group relative inset-0 grid h-full w-full place-items-center overflow-hidden rounded-lg border border-primary-500 transition',
+      'relative inset-0 grid h-full w-full place-items-center overflow-hidden rounded-lg border border-primary-500 transition group-active:bg-primary-100',
       dragHoverred ? 'bg-primary-100' : ''
     )}
   >
@@ -120,7 +121,7 @@
     {#if !imageObjectUrl}
       <div class="flex flex-col items-center gap-y-2 px-2">
         <IconImage
-          class="relative text-primary-500 group-active:scale-90"
+          class="relative text-primary-500 transition group-active:scale-90"
           font-size={$imageIconScale}
         />
         <span class="text-center text-primary-300"
@@ -142,7 +143,7 @@
     {...$$restProps}
   />
   <label class="absolute inset-0 block h-full w-full cursor-pointer" for={id} />
-</div>
+</button>
 {#if file}
   <div class="truncate">{file.name}</div>
 {/if}

@@ -20,7 +20,10 @@
     >
   </header>
   <div class="no flex max-h-screen min-h-screen flex-col">
-    <main class="no-scrollbar flex flex-1 flex-col overflow-auto">
+    <main
+      id="main-app-container"
+      class="no-scrollbar flex flex-1 flex-col overflow-auto"
+    >
       <slot />
     </main>
     <footer

@@ -25,6 +25,30 @@ export const checkSession = queryWithAuth({
   }
 });
 
+export const currentUser = queryWithAuth({
+  args: {},
+  handler: async (ctx) => {
+    // 👆 Query with Auth already checks for session Id
+    // we can assume this is protected
+
+    const user = await ctx.db.get(ctx.session.userId);
+    if (!user)
+      return {
+        status: ResponseStatus.Fail,
+        message: "Can't find user related to session."
+      };
+
+    return {
+      user: {
+        status: ResponseStatus.Success,
+        _id: user._id,
+        fullName: user.fullName,
+        username: user.username
+      }
+    };
+  }
+});
+
 export const register = mutation({
   args: {
     username: v.string(),

@@ -1,29 +1,30 @@
 <script lang="ts">
   // Icons
   import IconClose from '~icons/material-symbols/close-rounded';
+  import IconLoading from '~icons/eos-icons/three-dots-loading';
 
-  import { animate, inView, spring } from 'motion';
+  import { animate, spring } from 'motion';
   import { onDestroy, onMount } from 'svelte';
   import { closeModal } from 'svelte-modals';
-  import { audioPlayerCard, baseButton, button } from '@/styles/variants';
-  import AudioPlayerCard from '../AudioPlayerCard.svelte';
+  import { baseButton, button } from '@/styles/variants';
   import EditableAudioPlayerCard from '../EditableAudioPlayerCard.svelte';
+  import { createMutation, useQueryClient } from '@tanstack/svelte-query';
+  import { api, client } from '@/lib/convexClient';
+  import toast from 'svelte-french-toast';
+  import { getSessionId } from '@/lib/getSessionId';
 
   // provided by <Modals />
   export let isOpen: boolean;
   export let audioFile: File;
   export let audioUrl: string;
 
-  // State to change
-  let title: string = '';
+  // States (For POST)
+  let caption: string = '';
   let emojiTag: string = '🍀';
 
   onMount(() => {
-    let animation = animate(
-      '.modal',
-      { scale: [0.8, 1] },
-      { easing: spring({ velocity: 4 }) }
-    );
+    // Modal enter animation
+    animate('.modal', { scale: [0.8, 1] }, { easing: spring({ velocity: 4 }) });
   });
 
   onDestroy(() => {
@@ -39,6 +40,66 @@
     setTimeout(() => {
       closeModal();
     }, 100);
+
+    const queryClient = useQueryClient();
+    queryClient.invalidateQueries(['posts']);
+  }
+
+  const createPost = createMutation({
+    mutationFn: async ({
+      audioFile,
+      caption,
+      emojiTag
+    }: {
+      audioFile: File;
+      caption: string;
+      emojiTag: string;
+    }) => {
+      const sessionId = getSessionId();
+      if (!sessionId) return; // Typeguard
+
+      // 1. Create Upload URL
+      toast.loading('Uploading Audio...', { id: 'CREATE_POST' });
+      const generateUrlResult = await client.mutation(
+        api.upload.generateUploadUrl,
+        {
+          sessionId
+        }
+      );
+      if (generateUrlResult.status === 'Fail')
+        throw Error('Failed to generate Id');
+
+      // 2. Upload File
+      const result1 = await fetch(generateUrlResult.uploadUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': audioFile.type },
+        body: audioFile
+      });
+      const { storageId: audioId } = await result1.json();
+
+      await client.mutation(api.post.create, {
+        audioId: audioId,
+        caption: caption,
+        emojiTag: emojiTag,
+        sessionId: sessionId
+      });
+
+      toast.success('New Post Created!', { id: 'CREATE_POST' });
+    }
+  });
+
+  async function onPostClick() {
+    try {
+      await $createPost.mutateAsync({
+        audioFile,
+        caption,
+        emojiTag
+      });
+
+      onClose();
+    } catch (e) {
+      toast.error(`Failed to Post ${e}`, { id: 'CREATE_POST' });
+    }
   }
 </script>
 
@@ -56,20 +117,21 @@
           })}><IconClose font-size="25" /></button
         >
       </header>
-      <!-- <AudioPlayerCard
-        emojiTag=""
-        fullName="Carlo"
-        username="carlo"
-        id="modal-audio-player"
-        profilePictureUrl="https://encrypted-tbn2.gstatic.com/licensed-image?q=tbn:ANd9GcT6mjro1-LzvcDDVIzs4NhPaoPLyUR0jgUT8eG5XsmMTCXNBY22CIbWP59kfGhWAhJKczpk8oQAfZrVd_M"
-        title="Some thing wong"
-        {audioUrl}
-        verified
-        variants={{ color: 'secondary' }}
-      /> -->
-      <EditableAudioPlayerCard {audioUrl} {emojiTag} {title} />
-      <button class={button({ color: 'secondary', class: 'mt-5' })}>Post</button
+      <EditableAudioPlayerCard {audioUrl} bind:emojiTag bind:title={caption} />
+      <button
+        class={button({
+          color: 'secondary',
+          class: 'relative mt-5 flex h-14 items-center justify-center gap-x-4'
+        })}
+        on:click={onPostClick}
+        disabled={$createPost.isLoading}
       >
+        {#if $createPost.isLoading}
+          <IconLoading class="absolute" font-size={45} />
+        {:else}
+          <span>Post</span>
+        {/if}
+      </button>
     </div>
   </div>
 {/if}

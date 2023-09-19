@@ -4,6 +4,7 @@
   import { goto } from '$app/navigation';
   import toast from 'svelte-french-toast';
   import IconError from '~icons/material-symbols/error-outline';
+  import IconLoading from '~icons/eos-icons/three-dots-loading';
 
   // Setting the mode (For layout styles)
   import { setMode } from '../authLayoutStore';
@@ -12,6 +13,7 @@
   // Forms
   export let form;
   const FORM_TOASTID = 'LOGIN';
+  let loading = false;
 
   $: if (form) {
     if (form.status === 'Success' && form?.session?.sessionId) {
@@ -20,13 +22,14 @@
 
       toast.success('You have logged in.', { id: FORM_TOASTID });
       goto('/app');
-    }
-    if (form?.success === false) {
+    } else {
       toast.error('Failed to login.', { id: FORM_TOASTID });
     }
+    loading = false;
   }
 
   import { page } from '$app/stores';
+  import cn from '@/lib/cx';
   const message = $page.url.searchParams.get('message');
 </script>
 
@@ -42,6 +45,7 @@
   method="POST"
   id="loginform"
   use:enhance={() => {
+    loading = true;
     toast.loading('Logging in...', { id: FORM_TOASTID });
   }}
 >
@@ -74,10 +78,18 @@
   class="pointer-events-none fixed bottom-0 left-0 right-0 flex justify-center"
   style="padding-bottom: 10vh;"
 >
-  <input
-    type="submit"
-    form="loginform"
-    class={button({ color: 'secondary', class: 'pointer-events-auto' })}
-    value="Login"
-  />
+  <div class="relative grid place-items-center">
+    {#if loading}
+      <IconLoading class="absolute z-10 text-primary-500" font-size={60} />
+    {/if}
+    <input
+      type="submit"
+      form="loginform"
+      class={button({
+        color: 'secondary',
+        class: cn('pointer-events-auto', loading ? 'text-transparent' : '')
+      })}
+      value="Login"
+    />
+  </div>
 </div>

@@ -29,12 +29,10 @@ export const create = mutationWithAuth({
 });
 
 export const getSelf = queryWithAuth({
-  args: {
-    withPosts: v.optional(v.boolean())
-  },
-  handler: async (ctx, args) => {
-    const session = await ctx.session;
-    const user = await ctx.db.get(session.userId);
+  args: {},
+  handler: async (ctx) => {
+    // probably wrap below in a function.
+    const user = await ctx.db.get(ctx.session.userId);
 
     if (!user)
       return {
@@ -50,21 +48,15 @@ export const getSelf = queryWithAuth({
     if (user.audioBioId)
       audioBioUrl = await ctx.storage.getUrl(user.audioBioId);
 
-    let posts = null;
-    if (args.withPosts)
-      posts = await ctx.db
-        .query('posts')
-        .withIndex('by_userId', (q) => q.eq('userId', user._id));
-
     return {
       status: ResponseStatus.Success,
       profileImageUrl: profileImageUrl,
       audioBioUrl: audioBioUrl,
+      _id: user._id,
       username: user.username,
       fullName: user.fullName,
       oneLiner: user.oneLiner,
       joinDate: user._creationTime,
-      posts: posts,
       isVerified: user.isVerified
     };
   }
@@ -72,10 +64,10 @@ export const getSelf = queryWithAuth({
 
 export const getById = queryWithAuth({
   args: {
-    userId: v.id('users'),
-    withPosts: v.boolean()
+    userId: v.id('users')
   },
   handler: async (ctx, args) => {
+    // probably wrap below in a function.
     const user = await ctx.db.get(args.userId);
 
     if (!user)
@@ -92,40 +84,54 @@ export const getById = queryWithAuth({
     if (user.audioBioId)
       audioBioUrl = await ctx.storage.getUrl(user.audioBioId);
 
-    let posts = null;
-    if (args.withPosts)
-      posts = await ctx.db
-        .query('posts')
-        .withIndex('by_userId', (q) => q.eq('userId', user._id));
-
     return {
       status: ResponseStatus.Success,
       profileImageUrl: profileImageUrl,
       audioBioUrl: audioBioUrl,
+      _id: user._id,
       username: user.username,
       fullName: user.fullName,
-      oneliner: user.oneLiner,
+      oneLiner: user.oneLiner,
       joinDate: user._creationTime,
-      posts: posts
+      isVerified: user.isVerified
     };
   }
 });
 
 export const getRandom = queryWithAuth({
-  args: {
-    userId: v.id('users'),
-    withPosts: v.boolean()
-  },
-  handler: async (ctx, args) => {
-    const allUsers = await ctx.db.query('users').collect();
+  args: {},
+  handler: async (ctx) => {
+    // If still can't find a unique user after 10, just give it anyway.
+    // To avoid longrunning query.
+    const MAX_ROLLS = 10;
 
-    const randomUser = randChoice(allUsers);
+    const allUsers = await ctx.db.query('users').collect();
+    const session = await ctx.session;
+    const userMe = await ctx.db.get(session.userId);
+    if (!userMe)
+      return {
+        status: ResponseStatus.Fail,
+        message: 'Current user not found.'
+      };
+
+    // Roll for random user
+    let randomUser = randChoice(allUsers);
+    let rollCount: number = 0;
+    // Keep rolling if same as current user OR if new account (new accounts dont have profile pictures etc.)
+    while (randomUser._id === userMe?._id || randomUser.isNewAccount) {
+      randomUser = randChoice(allUsers);
+
+      rollCount += 1;
+      if (rollCount >= MAX_ROLLS) break;
+    }
+
+    // probably wrap below in a function.
     const user = await ctx.db.get(randomUser._id);
 
     if (!user)
       return {
         status: ResponseStatus.Fail,
-        message: 'User not found.'
+        message: 'Random User not found.'
       };
 
     let profileImageUrl = null;
@@ -136,21 +142,16 @@ export const getRandom = queryWithAuth({
     if (user.audioBioId)
       audioBioUrl = await ctx.storage.getUrl(user.audioBioId);
 
-    let posts = null;
-    if (args.withPosts)
-      posts = await ctx.db
-        .query('posts')
-        .withIndex('by_userId', (q) => q.eq('userId', user._id));
-
     return {
       status: ResponseStatus.Success,
       profileImageUrl: profileImageUrl,
       audioBioUrl: audioBioUrl,
+      _id: user._id,
       username: user.username,
       fullName: user.fullName,
-      oneliner: user.oneLiner,
+      oneLiner: user.oneLiner,
       joinDate: user._creationTime,
-      posts: posts
+      isVerified: user.isVerified
     };
   }
 });

@@ -6,7 +6,6 @@
   import FileDrop from '@/components/FileDrop.svelte';
   import { ResponseStatus } from '../../../../../convex/responseStatuses';
   import AudioRecorder from '@/components/AudioRecorder.svelte';
-  import { onMount } from 'svelte';
   import { getSessionId } from '@/lib/getSessionId';
   import { api, client } from '$lib/convexClient';
 
@@ -24,6 +23,8 @@
     required
   } from 'svelte-use-form';
   import { goto } from '$app/navigation';
+  import { compressImage } from '@/lib/compressImage';
+  import { blobToFile } from '@/lib/blobToFile';
   const form = useForm();
 
   // +--- Extra States for the Form Files ---+
@@ -51,10 +52,22 @@
 
       // 2. PROFILE IMAGE UPLOAD: Upload File
       toast.loading('Uploading Profile Image...', { id: FORM_TOASTID });
+
+      /** Compressed the file by 50%*/
+      const compressedImage = await compressImage(profileImageFile, {
+        quality: 0.5,
+        type: 'image/jpeg'
+      });
+
+      /** Will still be the same image if not possible to compress. */
+      const compressedFile = compressedImage
+        ? blobToFile(compressedImage, 'my-image.jpeg')
+        : profileImageFile;
+
       const result1 = await fetch(generateUrlResult.uploadUrl, {
         method: 'POST',
-        headers: { 'Content-Type': profileImageFile.type },
-        body: profileImageFile
+        headers: { 'Content-Type': compressedFile.type },
+        body: compressedFile
       });
       const { storageId: profilePictureId } = await result1.json();
 

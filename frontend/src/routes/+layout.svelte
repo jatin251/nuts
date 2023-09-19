@@ -15,15 +15,21 @@
     } else done();
   }
 
-  // onNavigate((navigation) => {
-  //   start();
+  // +--- Svelte Query ---+
+  import { browser } from '$app/environment';
+  import { QueryClient, QueryClientProvider } from '@tanstack/svelte-query';
 
-  //   return new Promise((resolve) => {
-  //     done();
-  //   });
-  // });
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        enabled: browser
+      }
+    }
+  });
 </script>
 
-<slot />
+<QueryClientProvider client={queryClient}>
+  <slot />
+</QueryClientProvider>
 
 <Toaster />

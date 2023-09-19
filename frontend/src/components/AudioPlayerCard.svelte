@@ -16,10 +16,21 @@
   export let username: string;
   export let profilePictureUrl: string | undefined;
   export let id: string;
+  /** The same id but prefixed with post for the purpose hexadecimal id in dom. */
+  let idSelector: string = `player-${id}`;
   export let emojiTag: string;
   export let title: string;
   export let audioUrl: string;
   export let lastModified: string = '2023-09-10';
+  export let likesCount: number = 0;
+  export let likerIds: string[] = [];
+  /** Will help indicate if the like button is red or not. */
+  export let currentUserId: string = '';
+
+  export let onLikeClick: (args: {
+    postId: string;
+    like: boolean;
+  }) => void = () => {};
 
   export let variants: VariantProps<typeof audioPlayerCard> | undefined =
     undefined;
@@ -57,15 +68,23 @@
         <h2 class="font-circularstd font-medium">{title}</h2>
       </div>
 
-      <button class={baseButton({ class: 'flex items-center gap-x-1' })}>
-        <span class="text-xs text-gray-300">24</span>
+      <button
+        class={baseButton({ class: 'flex items-center gap-x-1' })}
+        on:click={() => {
+          const like = !likerIds.includes(currentUserId); // Do opposite.
+          onLikeClick?.({ postId: id, like: like });
+        }}
+      >
+        <span class="text-xs text-gray-300">{likesCount}</span>
         <IconHeart
-          class={classNames(false ? 'text-red-400' : 'text-gray-300')}
+          class={classNames(
+            likerIds.includes(currentUserId) ? 'text-red-400' : 'text-gray-300'
+          )}
         />
       </button>
     </header>
     <div class="px-3">
-      <AudioPlayer {id} {audioUrl} />
+      <AudioPlayer id={idSelector} {audioUrl} />
     </div>
     <footer class="text-xs font-thin text-gray-300">
       {dayjs(lastModified).fromNow()}

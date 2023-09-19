@@ -1,10 +1,9 @@
 <script lang="ts">
-  import toast from 'svelte-french-toast';
   import AudioRecorder from './AudioRecorder.svelte';
   import NewPostRecorderModal from './Modals/NewPostRecorderModal.svelte';
   let recording = false;
   let currentProgress = 0;
-  let limit = 10;
+  let limit = 16;
   let audioUrl: string;
   let audioFile: File;
 
@@ -50,17 +49,16 @@ it's a special type of AudioRecorder that exists on the `/app` page.
         recording = true;
       }}
       onRecordProgress={(progress) => {
-        console.log(progress);
         currentProgress = progress;
       }}
       onRecordComplete={(file) => {
         audioFile = file;
         audioUrl = URL.createObjectURL(file);
+        onRecordComplete();
 
         setTimeout(() => {
           recording = false;
-          onRecordComplete();
-        }, 800);
+        }, 1000);
       }}
       recordTimeLimit={limit}
     />

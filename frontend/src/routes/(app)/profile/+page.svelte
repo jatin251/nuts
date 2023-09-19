@@ -1,34 +1,75 @@
-<script>
+<script lang="ts">
   // Icons
-
   import IconVerified from '~icons/mdi/check-decagram';
+
+  import Skeleton from '@/components/Skeleton.svelte';
 
   import { client, api } from '@/lib/convexClient';
   import { getSessionId } from '@/lib/getSessionId';
   import { button } from '@/styles/variants';
-  import { onMount } from 'svelte';
   import dayjs from 'dayjs';
   import relativeTime from 'dayjs/plugin/relativeTime';
   dayjs.extend(relativeTime);
-  import AudioPlayer from '@/components/AudioPlayer.svelte';
   import { goto } from '$app/navigation';
   import toast from 'svelte-french-toast';
+  import {
+    createMutation,
+    createQuery,
+    useQueryClient
+  } from '@tanstack/svelte-query';
+  import ProfileBase from '@/components/ProfileBase.svelte';
+  import AudioPlayerCard from '@/components/AudioPlayerCard.svelte';
+  import { useLikeMutation } from '@/lib/services/likeMutation';
 
-  /**
-   * @type {{ username: any; isVerified: any; oneLiner: any; status?: "Success"; profileImageUrl?: string | null; audioBioUrl?: string | null; fullName?: string | undefined; joinDate?: number; posts?: import("convex/server").Query<{ document: { _id: import("convex/values").GenericId<"posts">; _creationTime: number; caption?: string | undefined; userId: import("convex/values").GenericId<"users">; emojiTag: string; audioId: string; comments: { userId: import("convex/values").GenericId<"users">; commentId: string; comment: string; }[]; likes: number; likerIds: import("convex/values").GenericId<"users">[]; _lastModified: string; }; fieldPaths: ("userId" | "emojiTag" | "caption" | "audioId" | "comments" | "likes" | "likerIds" | "_lastModified" | "_creationTime") | "_id"; indexes: { by_userId: ["userId", "_creationTime"]; by_creation_time: ["_creationTime"]; }; searchIndexes: {}; vectorIndexes: {}; }> | null; message?: undefined; }}
-   */
-  let profile;
+  const profileQuery = createQuery({
+    queryKey: ['profileData'],
+    queryFn: async () => {
+      const sessionId = getSessionId();
+      if (!sessionId) return;
 
-  onMount(async () => {
-    const sessionId = getSessionId();
-    if (!sessionId) return;
+      const _profileResult = await client.query(api.profile.getSelf, {
+        sessionId: sessionId
+      });
 
-    const _profileResult = await client.query(api.profile.getSelf, {
-      sessionId: sessionId
-    });
+      if (_profileResult.status === 'Fail')
+        throw new Error(_profileResult.message);
 
-    if (_profileResult.status === 'Success') profile = _profileResult;
+      return _profileResult;
+    }
   });
+
+  const postsQuery = createQuery({
+    queryKey: ['profilePosts'],
+    queryFn: async () => {
+      const sessionId = getSessionId();
+      if (!sessionId) return;
+
+      const _postsResult = await client.query(api.post.getSelf, {
+        sessionId: sessionId
+      });
+
+      if (_postsResult.status === 'Fail') throw new Error(_postsResult.message);
+
+      return _postsResult;
+    }
+  });
+
+  const userQuery = createQuery({
+    queryKey: ['user'],
+    queryFn: async () => {
+      const sessionId = getSessionId();
+      if (!sessionId) return; // Typeguard
+
+      const user = await client.query(api.auth.currentUser, {
+        sessionId: sessionId
+      });
+
+      if (user.status === 'Fail') throw Error(user.message);
+
+      return user;
+    }
+  });
+  $: currentUser = $userQuery.data?.user;
 
   async function onLogoutClick() {
     toast.loading('Logging you out...', { id: 'LOGOUT' });
@@ -43,49 +84,65 @@
     }
     toast.error('Failed to logout.', { id: 'LOGOUT' });
   }
+
+  const likeMutation = useLikeMutation('profilePosts');
+
+  async function onLikeClick({
+    like,
+    postId
+  }: {
+    like: boolean;
+    postId: string;
+  }) {
+    if (!currentUser) return;
+
+    const result = await $likeMutation.mutateAsync({
+      like: like,
+      postId: postId,
+      userId: currentUser._id
+    });
+  }
+
+  $: profile = $profileQuery?.data;
 </script>
 
 <div class="flex-1 bg-[#F3F3F3] pb-16">
   <div class="h-[60px]" />
   <div class="mx-auto flex w-full max-w-lg flex-col gap-y-2 px-9">
-    <header>
-      <section class="flex items-center justify-between gap-x-5">
-        <div class="flex items-center gap-x-1">
-          <h1 class="font-circularstd text-xl font-semibold">
-            {profile?.fullName?.split(' ')?.[0] ?? '...'}
-          </h1>
-          {#if !profile?.isVerified}
-            <IconVerified class="text-primary-500" font-size={20} />
-          {/if}
-        </div>
-        {#if profile?.joinDate}
-          <div class="text-sm text-primary-400">
-            Joined {dayjs(profile?.joinDate)?.fromNow()}
-          </div>
-        {/if}
-      </section>
-      <p class="text-sm text-gray-500">{profile?.oneLiner}</p>
-    </header>
-    <img
-      src={profile?.profileImageUrl}
-      alt=""
-      class="aspect-square w-full rounded-xl object-cover"
+    <ProfileBase
+      loading={$profileQuery.isLoading}
+      audioBioUrl={profile?.audioBioUrl ?? ''}
+      fullName={profile?.fullName ?? ''}
+      joinDate={profile?.joinDate ?? ''}
+      oneLiner={profile?.oneLiner ?? ''}
+      profileImageUrl={profile?.profileImageUrl ?? ''}
+      username={profile?.username ?? ''}
+      isVerified={profile?.isVerified}
     />
-    <div class="mt-2 flex flex-col gap-y-2">
-      <h2 class="flex items-center gap-x-2 font-semibold">
-        <span>🔈</span><span>Audio Bio</span>
-      </h2>
-      {#if profile?.audioBioUrl}
-        <AudioPlayer
-          id={profile?.username + '-audio-bio'}
-          audioUrl={profile?.audioBioUrl}
-        />
-      {/if}
-    </div>
+
     <button
       type="button"
       on:click={onLogoutClick}
       class={button({ size: 'base', class: 'mt-5' })}>Logout</button
     >
+
+    <h2>Activity</h2>
+    {#each $postsQuery?.data?.posts ?? [] as post (post._id)}
+      <AudioPlayerCard
+        audioUrl={post.audioUrl ?? ''}
+        emojiTag={post.emojiTag}
+        fullName={post.user.fullName ?? ''}
+        id={post._id}
+        profilePictureUrl={post.user.profilePictureUrl ?? ''}
+        title={post.caption ?? ''}
+        username={post.user.username}
+        lastModified={post.lastModified}
+        likerIds={post.likerIds}
+        likesCount={post.likes}
+        verified={post.user.isVerified}
+        currentUserId={currentUser?._id}
+        {onLikeClick}
+      />
+    {/each}
   </div>
 </div>
