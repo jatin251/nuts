@@ -89,7 +89,7 @@
     mediaRecorder = new MediaRecorder(stream);
     mediaRecorder.ondataavailable = (e) => media.push(e.data);
     mediaRecorder.onstop = function (m) {
-      const blob = new Blob(media, { type: 'audio/mpeg-3' });
+      const blob = new Blob(media, { type: 'audio/mpeg' });
       finalAudioSrc = window.URL.createObjectURL(blob);
 
       const file = blobToFile(blob, 'audio-bio.mp3');
@@ -145,7 +145,7 @@
       class={cn('w-full', recording || !finalAudioSrc ? 'opacity-0' : '')}
       src={finalAudioSrc}
     >
-      <source src={finalAudioSrc} type="audio/mpeg-3" />
+      <source src={finalAudioSrc} type="audio/mpeg" />
     </audio>
 
     {#if recording}
