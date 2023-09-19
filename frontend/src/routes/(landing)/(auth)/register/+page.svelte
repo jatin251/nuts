@@ -31,6 +31,10 @@
   }
 </script>
 
+<svelte:head>
+  <title>Resonate - Create Account</title>
+</svelte:head>
+
 <form
   class="flex flex-col gap-y-8"
   method="POST"

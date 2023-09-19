@@ -182,7 +182,6 @@
           !($postsQuery.isFetching || $postsQuery.isLoading) &&
           !isDone
         ) {
-          console.log('Fetching...');
           $postsQuery.fetchNextPage();
         }
       },
@@ -193,6 +192,10 @@
     );
   });
 </script>
+
+<svelte:head>
+  <title>Resonate | Explore</title>
+</svelte:head>
 
 <div class="flex-1 bg-[#F3F3F3] pb-16">
   <div class="h-[60px]" />

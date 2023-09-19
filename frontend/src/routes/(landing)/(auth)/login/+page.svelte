@@ -33,6 +33,10 @@
   const message = $page.url.searchParams.get('message');
 </script>
 
+<svelte:head>
+  <title>Resonate - Login</title>
+</svelte:head>
+
 {#if message}
   <div
     class="mb-5 flex items-center justify-center gap-x-2 rounded-md border-2 border-red-300 bg-red-500 px-3 py-6 text-white"

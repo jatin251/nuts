@@ -106,6 +106,10 @@
   $: profile = $profileQuery?.data;
 </script>
 
+<svelte:head>
+  <title>Resonate | Profile</title>
+</svelte:head>
+
 <div class="flex-1 bg-[#F3F3F3] pb-16">
   <div class="h-[60px]" />
   <div class="mx-auto flex w-full max-w-lg flex-col gap-y-2 px-9">

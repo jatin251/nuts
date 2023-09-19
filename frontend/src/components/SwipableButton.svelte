@@ -41,7 +41,7 @@
   }
 </script>
 
-<div class="absolute bottom-0 right-0 top-0 z-20 flex items-center">
+<div class="absolute right-0 top-80 z-20 flex items-center">
   <button
     use:drag
     on:drag={dragHandler}

@@ -83,6 +83,10 @@
   }
 </script>
 
+<svelte:head>
+  <title>Resonate | Meet new People</title>
+</svelte:head>
+
 <div class="relative flex-1 bg-[#F3F3F3] pb-16">
   <div class="h-[60px]" />
   <div class="mx-auto flex w-full max-w-lg flex-col gap-y-2 px-9">
