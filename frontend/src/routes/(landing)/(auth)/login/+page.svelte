@@ -91,8 +91,12 @@
       form="loginform"
       class={button({
         color: 'secondary',
-        class: cn('pointer-events-auto', loading ? 'text-transparent' : '')
+        class: [
+          'pointer-events-auto disabled:opacity-50',
+          loading ? 'text-transparent' : ''
+        ]
       })}
+      disabled={loading}
       value="Login"
     />
   </div>

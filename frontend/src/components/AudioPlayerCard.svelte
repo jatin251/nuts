@@ -78,7 +78,8 @@
         <span class="text-xs text-gray-300">{likesCount}</span>
         <IconHeart
           class={classNames(
-            likerIds.includes(currentUserId) ? 'text-red-400' : 'text-gray-300'
+            likerIds.includes(currentUserId) ? 'text-red-400' : 'text-gray-300',
+            'transition ease-out active:scale-150'
           )}
         />
       </button>

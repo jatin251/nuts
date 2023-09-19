@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { enhance } from '$app/forms';
+  import IconLoading from '~icons/eos-icons/three-dots-loading';
   import { setMode } from '../authLayoutStore';
   import toast from 'svelte-french-toast';
   import { button } from '@/styles/variants';
@@ -30,10 +30,15 @@
   // +--- Extra States for the Form Files ---+
   let audioBioFile: File;
   let profileImageFile: File;
+  let loading = false;
 
   async function handleSubmitForm(event: SubmitEvent) {
     event.preventDefault();
-    if (!audioBioFile || !profileImageFile) return; // disable.
+    loading = true;
+    if (!audioBioFile || !profileImageFile) {
+      loading = false;
+      return;
+    } // disable.
 
     try {
       const sessionId = getSessionId();
@@ -106,9 +111,11 @@
           id: FORM_TOASTID
         });
     } catch (e) {
+      loading = false;
       toast.error(`Failed to Save: ${e}`, {
         id: FORM_TOASTID
       });
+      loading = false;
     }
   }
 </script>
@@ -197,14 +204,21 @@
   class="pointer-events-none fixed bottom-0 left-0 right-0 flex justify-center"
   style="padding-bottom: 10vh;"
 >
-  <input
-    type="submit"
-    form="loginform"
-    class={button({
-      class:
-        'pointer-events-auto disabled:cursor-not-allowed disabled:opacity-50 disabled:grayscale'
-    })}
-    value="Get Started"
-    disabled={!$form.valid || !audioBioFile || !profileImageFile}
-  />
+  <div class="relative grid place-items-center">
+    {#if loading}
+      <IconLoading class="absolute z-10 text-primary-500" font-size={60} />
+    {/if}
+    <input
+      type="submit"
+      form="loginform"
+      class={button({
+        class: [
+          'pointer-events-auto disabled:cursor-not-allowed disabled:opacity-50 disabled:grayscale',
+          loading ? 'text-transparent' : ''
+        ]
+      })}
+      value="Get Started"
+      disabled={!$form.valid || !audioBioFile || !profileImageFile || loading}
+    />
+  </div>
 </div>

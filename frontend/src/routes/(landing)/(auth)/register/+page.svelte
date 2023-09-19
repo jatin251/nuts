@@ -92,8 +92,12 @@
       form="registerform"
       class={button({
         color: 'secondary',
-        class: cn('pointer-events-auto', loading ? 'text-transparent' : '')
+        class: cn(
+          'pointer-events-auto disabled:opacity-50',
+          loading ? 'text-transparent' : ''
+        )
       })}
+      disabled={loading}
       value="Create Account"
     />
   </div>

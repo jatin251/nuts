@@ -181,11 +181,18 @@ export const likePost = mutationWithAuth({
         message: 'Post does not exist.'
       };
 
+    let newLikerIds = post.likerIds;
+    if (like && !newLikerIds.includes(ctx.session.userId)) {
+      newLikerIds.push(ctx.session.userId);
+    } else if (!like && newLikerIds.includes(ctx.session.userId)) {
+      newLikerIds = post.likerIds.filter(
+        (likerId) => likerId !== ctx.session.userId
+      );
+    }
+
     await ctx.db.patch(args.postId, {
-      likes: args.like ? post.likes + 1 : post.likes - 1,
-      likerIds: like
-        ? [...post.likerIds, ctx.session.userId]
-        : post.likerIds.filter((likerId) => likerId !== ctx.session.userId)
+      likes: newLikerIds.length,
+      likerIds: newLikerIds
     });
 
     return {
