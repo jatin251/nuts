@@ -99,8 +99,10 @@ export const getById = queryWithAuth({
 });
 
 export const getRandom = queryWithAuth({
-  args: {},
-  handler: async (ctx) => {
+  args: {
+    previousUserId: v.optional(v.id('users'))
+  },
+  handler: async (ctx, args) => {
     // If still can't find a unique user after 10, just give it anyway.
     // To avoid longrunning query.
     const MAX_ROLLS = 10;
@@ -118,7 +120,11 @@ export const getRandom = queryWithAuth({
     let randomUser = randChoice(allUsers);
     let rollCount: number = 0;
     // Keep rolling if same as current user OR if new account (new accounts dont have profile pictures etc.)
-    while (randomUser._id === userMe?._id || randomUser.isNewAccount) {
+    while (
+      randomUser._id === userMe?._id ||
+      randomUser.isNewAccount ||
+      randomUser._id === args.previousUserId
+    ) {
       randomUser = randChoice(allUsers);
 
       rollCount += 1;

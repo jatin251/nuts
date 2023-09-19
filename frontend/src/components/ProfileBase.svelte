@@ -58,7 +58,9 @@
       <span>🔈</span><span>Audio Bio</span>
     </h2>
     {#if audioBioUrl}
-      <AudioPlayer id={'audio-bio' + username} audioUrl={audioBioUrl} />
+      {#key audioBioUrl}
+        <AudioPlayer id={'audio-bio' + username} audioUrl={audioBioUrl} />
+      {/key}
     {/if}
   </div>
 </div>

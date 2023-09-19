@@ -126,7 +126,7 @@
     </h2>
     <input
       type="text"
-      class="border-b-2 border-gray-800 bg-transparent pb-2 text-xl text-gray-800 outline-none placeholder:text-gray-800/50"
+      class="border-b-2 border-gray-800 bg-transparent pb-2 text-xl text-gray-800 outline-none placeholder:text-gray-800/40"
       placeholder="Carlo Taleon"
       name="fullName"
       autocomplete="off"
@@ -144,7 +144,7 @@
     </h2>
     <input
       type="text"
-      class="border-b-2 border-gray-800 bg-transparent pb-2 text-xl text-gray-800 outline-none placeholder:text-gray-800/50"
+      class="border-b-2 border-gray-800 bg-transparent pb-2 text-xl text-gray-800 outline-none placeholder:text-gray-800/40"
       placeholder="Awesome Engineer"
       autocomplete="off"
       name="oneLiner"

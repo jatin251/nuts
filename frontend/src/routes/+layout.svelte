@@ -49,7 +49,7 @@
     property="og:description"
     content="A new audio-based social media built with Svelte and Convex. Hackathon project for webdev cody."
   />
-  <meta property="og:image" content="og-image.jpg" />
+  <meta property="og:image" content="/og-image.jpg" />
 
   <!-- Twitter -->
   <meta property="twitter:card" content="summary_large_image" />
@@ -62,7 +62,7 @@
     property="twitter:description"
     content="A new audio-based social media built with Svelte and Convex. Hackathon project for webdev cody."
   />
-  <meta property="twitter:image" content="og-image.jpg" />
+  <meta property="twitter:image" content="/og-image.jpg" />
 
   <!-- Meta Tags Generated with https://metatags.io -->
 </svelte:head>

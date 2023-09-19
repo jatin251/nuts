@@ -24,14 +24,19 @@
   });
   $: currentUser = $userQuery.data?.user;
 
+  let previousUserId: string | undefined = undefined;
+
   const profileQuery = createQuery({
-    queryKey: ['random-profile-data'],
-    queryFn: async () => {
+    queryKey: ['random-profile-data', previousUserId],
+    queryFn: async ({ queryKey }) => {
+      const [_, previoausUserId] = queryKey;
+
       const sessionId = getSessionId();
       if (!sessionId) return;
 
       const _profileResult = await client.query(api.profile.getRandom, {
-        sessionId: sessionId
+        sessionId: sessionId,
+        previousUserId: previousUserId as any
       });
 
       if (_profileResult.status === 'Fail')
@@ -39,7 +44,11 @@
 
       return _profileResult;
     },
-    networkMode: 'online'
+    onSuccess(data) {
+      previousUserId = data?._id;
+    },
+    networkMode: 'online',
+    cacheTime: 0
   });
 
   $: profile = $profileQuery.data;
@@ -90,7 +99,7 @@
   <div class="mx-auto flex w-full max-w-lg flex-col gap-y-2 px-9">
     <ProfileBase
       loading={$profileQuery.isLoading || $profileQuery.isFetching}
-      audioBioUrl={profile?.audioBioUrl ?? ''}
+      audioBioUrl={$profileQuery.data?.audioBioUrl ?? ''}
       fullName={profile?.fullName ?? ''}
       joinDate={profile?.joinDate ?? ''}
       oneLiner={profile?.oneLiner ?? ''}

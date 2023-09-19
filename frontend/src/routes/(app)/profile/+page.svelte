@@ -130,7 +130,7 @@
       class={button({ size: 'base', class: 'mt-5' })}>Logout</button
     >
 
-    <h2>Activity</h2>
+    <h2 class="mt-5 font-semibold">Activity</h2>
     {#each $postsQuery?.data?.posts ?? [] as post (post._id)}
       <AudioPlayerCard
         audioUrl={post.audioUrl ?? ''}
@@ -148,5 +148,8 @@
         {onLikeClick}
       />
     {/each}
+    {#if !$postsQuery?.data?.posts || $postsQuery.data.posts.length <= 0}
+      <p class="text-gray-400">No Activity Yet.</p>
+    {/if}
   </div>
 </div>

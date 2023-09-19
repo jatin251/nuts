@@ -39,7 +39,7 @@
     );
     setTimeout(() => {
       closeModal();
-    }, 100);
+    }, 800);
 
     const queryClient = useQueryClient();
     queryClient.invalidateQueries(['posts']);

@@ -17,6 +17,8 @@
     return num <= min ? min : num >= max ? max : num;
   }
 
+  let swipeMessage = 'Swipe';
+
   function dragHandler({ detail }: any) {
     const {
       active,
@@ -35,9 +37,13 @@
           }
     );
 
-    if ($buttonPos.x >= -30 && !active) {
+    if ($buttonPos.x === -30 && !active) {
       onSwipeMaxRelease?.(); // Trigger the event.
     }
+  }
+  $: {
+    if ($buttonPos.x === -30) swipeMessage = 'Release!';
+    else swipeMessage = 'Swipe';
   }
 </script>
 
@@ -49,6 +55,6 @@
     class={baseButton({
       class:
         'absolute -right-10 flex h-20 w-40  items-center gap-x-1 rounded-l-full bg-primary-500 pl-8 text-white transition active:scale-90'
-    })}><IconArrow class="rotate-180" />Swipe</button
+    })}><IconArrow class="rotate-180" />{swipeMessage}</button
   >
 </div>
