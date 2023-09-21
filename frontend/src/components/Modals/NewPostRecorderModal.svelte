@@ -31,18 +31,19 @@
     animate('.modal', { scale: [1, 0.8] }, { easing: spring({ velocity: 4 }) });
   });
 
+  const queryClient = useQueryClient();
+
   function onClose() {
     animate(
       '.modal',
       { scale: [1, 0], opacity: [1, 0] },
       { easing: 'ease-out' }
     );
+    queryClient.invalidateQueries(['posts']);
+
     setTimeout(() => {
       closeModal();
-    }, 800);
-
-    const queryClient = useQueryClient();
-    queryClient.invalidateQueries(['posts']);
+    }, 250);
   }
 
   const createPost = createMutation({

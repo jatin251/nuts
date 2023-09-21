@@ -89,11 +89,14 @@
     mediaRecorder = new MediaRecorder(stream);
     mediaRecorder.ondataavailable = (e) => media.push(e.data);
     mediaRecorder.onstop = function (m) {
-      const blob = new Blob(media, { type: 'audio/mpeg' });
-      finalAudioSrc = window.URL.createObjectURL(blob);
+      const blob = new Blob(media, {
+        type: 'audio/mpeg3;audio/x-mpeg-3;video/mpeg;video/x-mpeg;'
+      });
 
-      const file = blobToFile(blob, 'audio-bio.mp3');
+      const file = blobToFile(blob, 'my-audio.mp3');
       onRecordComplete?.(file);
+
+      finalAudioSrc = window.URL.createObjectURL(file);
     };
 
     mediaRecorder.start();
@@ -109,6 +112,7 @@
     stream?.getTracks().forEach(function (track) {
       track.stop();
     });
+
     recording = false;
     animation?.pause();
     stopTimers();
@@ -145,7 +149,7 @@
       class={cn('w-full', recording || !finalAudioSrc ? 'opacity-0' : '')}
       src={finalAudioSrc}
     >
-      <source src={finalAudioSrc} type="audio/mpeg" />
+      <source src={finalAudioSrc} type="audio/webm" />
     </audio>
 
     {#if recording}
