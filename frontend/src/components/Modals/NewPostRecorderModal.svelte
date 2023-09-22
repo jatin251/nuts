@@ -71,9 +71,13 @@
         throw Error('Failed to generate Id');
 
       // 2. Upload File
+      const audioContentType = audioFile.type
+        .split(';')
+        .filter((audioFileType) => audioFileType !== '');
+
       const result1 = await fetch(generateUrlResult.uploadUrl, {
         method: 'POST',
-        headers: { 'Content-Type': audioFile.type },
+        headers: { 'Content-Type': audioContentType[0] },
         body: audioFile
       });
       const { storageId: audioId } = await result1.json();
