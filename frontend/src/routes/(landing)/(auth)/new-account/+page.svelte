@@ -79,6 +79,10 @@
       // 1. AUDIO BIO UPLOAD:  Generate Upload URL
       toast.loading('Uploading Audio Bio...', { id: FORM_TOASTID });
 
+      const audioContentType = audioBioFile.type
+        .split(';')
+        .filter((audioBioFileType) => audioBioFileType !== '');
+
       generateUrlResult = await client.mutation(api.upload.generateUploadUrl, {
         sessionId
       });
@@ -87,7 +91,7 @@
       // 2. AUDIO BIO UPLOAD: Upload File
       const result2 = await fetch(generateUrlResult.uploadUrl, {
         method: 'POST',
-        headers: { 'Content-Type': audioBioFile.type },
+        headers: { 'Content-Type': audioContentType[0] },
         body: audioBioFile
       });
       const { storageId: audioBioId } = await result2.json();
