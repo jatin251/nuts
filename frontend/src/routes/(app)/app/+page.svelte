@@ -189,7 +189,7 @@
 </script>
 
 <svelte:head>
-  <title>Resonate | Explore</title>
+  <title>ViChat | Explore</title>
 </svelte:head>
 
 <div class="flex-1 bg-[#F3F3F3] pb-16">

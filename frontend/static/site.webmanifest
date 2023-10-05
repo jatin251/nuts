@@ -1,1 +1,19 @@
-{"name":"Resonate","short_name":"Resonate","icons":[{"src":"/android-chrome-192x192.png","sizes":"192x192","type":"image/png"},{"src":"/android-chrome-512x512.png","sizes":"512x512","type":"image/png"}],"theme_color":"#42D6B2","background_color":"#42D6B2","display":"standalone"}
+{
+  "name": "LIre",
+  "short_name": "LIre",
+  "icons": [
+    {
+      "src": "/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "theme_color": "#42D6B2",
+  "background_color": "#42D6B2",
+  "display": "standalone"
+}

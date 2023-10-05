@@ -107,7 +107,7 @@
 </script>
 
 <svelte:head>
-  <title>Resonate | Profile</title>
+  <title>ViChat | Profile</title>
 </svelte:head>
 
 <div class="flex-1 bg-[#F3F3F3] pb-16">

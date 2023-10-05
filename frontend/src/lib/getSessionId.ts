@@ -3,5 +3,5 @@
  * localstorage if it exists
  */
 export const getSessionId = () => {
-  return localStorage.getItem('resonate-s');
+  return localStorage.getItem('ViChat-s');
 };

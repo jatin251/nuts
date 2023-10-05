@@ -34,7 +34,7 @@
   <div class="flex h-full flex-grow">
     <div class="mx-auto flex w-full max-w-xl flex-col gap-y-8 px-9 pt-16">
       <header>
-        <div style="view-transition-name: resonate-logo;">
+        <div style="view-transition-name: ViChat-logo;">
           <a
             href="/"
             class={cn({ 'pointer-events-none': mode === 'new-account' })}
@@ -45,7 +45,7 @@
                 { 'text-primary-500': mode === 'new-account' }
               )}
             >
-              Resonate
+              ViChat
             </h1></a
           >
         </div>

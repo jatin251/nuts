@@ -19,7 +19,7 @@
   $: if (form) {
     if (form.status === 'Success' && form?.session?.sessionId) {
       // Save to local storage here
-      localStorage.setItem('resonate-s', form?.session?.sessionId);
+      localStorage.setItem('ViChat-s', form?.session?.sessionId);
 
       toast.success('Credentials created!', { id: FORM_TOASTID });
       goto('/new-account');
@@ -32,7 +32,7 @@
 </script>
 
 <svelte:head>
-  <title>Resonate - Create Account</title>
+  <title>ViChat - Create Account</title>
 </svelte:head>
 
 <form

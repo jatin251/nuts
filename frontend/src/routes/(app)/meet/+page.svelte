@@ -91,7 +91,7 @@
 </script>
 
 <svelte:head>
-  <title>Resonate | Meet new People</title>
+  <title>ViChat | Meet new People</title>
 </svelte:head>
 
 <div class="relative flex-1 bg-[#F3F3F3] pb-16">

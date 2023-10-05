@@ -31,8 +31,8 @@
 
 <svelte:head>
   <!-- Primary Meta Tags -->
-  <title>Resonate - A new audio-based social media</title>
-  <meta name="title" content="Resonate - A new audio-based social media" />
+  <title>ViChat - A new audio-based social media</title>
+  <meta name="title" content="ViChat - A new audio-based social media" />
   <meta
     name="description"
     content="A new audio-based social media built with Svelte and Convex. Hackathon project for webdev cody."
@@ -43,7 +43,7 @@
   <meta property="og:url" content="" />
   <meta
     property="og:title"
-    content="Resonate - A new audio-based social media"
+    content="ViChat - A new audio-based social media"
   />
   <meta
     property="og:description"
@@ -56,7 +56,7 @@
   <meta property="twitter:url" content="" />
   <meta
     property="twitter:title"
-    content="Resonate - A new audio-based social media"
+    content="ViChat - A new audio-based social media"
   />
   <meta
     property="twitter:description"

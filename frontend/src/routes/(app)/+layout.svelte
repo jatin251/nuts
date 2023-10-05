@@ -16,7 +16,7 @@
     <a
       href="/app"
       class="relative flex w-full touch-none justify-center text-center font-circularstd text-[16px] font-semibold"
-      >Resonate</a
+      >ViChat</a
     >
   </header>
   <div class="no flex max-h-screen min-h-screen flex-col">

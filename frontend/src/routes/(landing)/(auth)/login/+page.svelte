@@ -18,7 +18,7 @@
   $: if (form) {
     if (form.status === 'Success' && form?.session?.sessionId) {
       // Save to local storage here
-      localStorage.setItem('resonate-s', form?.session?.sessionId);
+      localStorage.setItem('ViChat-s', form?.session?.sessionId);
 
       toast.success('You have logged in.', { id: FORM_TOASTID });
       goto('/app');
@@ -34,7 +34,7 @@
 </script>
 
 <svelte:head>
-  <title>Resonate - Login</title>
+  <title>ViChat - Login</title>
 </svelte:head>
 
 {#if message}

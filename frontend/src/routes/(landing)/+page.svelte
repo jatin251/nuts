@@ -88,10 +88,10 @@
     <div
       class="mx-auto flex w-full max-w-xl flex-col justify-center gap-y-5 px-9 py-16"
     >
-      <div style="view-transition-name: resonate-logo;">
+      <div style="view-transition-name: ViChat-logo;">
         <a href="/">
           <h1 class="text-center font-circularstd text-5xl text-white">
-            Resonate
+            ViChat
           </h1>
         </a>
       </div>
@@ -110,7 +110,7 @@
         <div
           class="chat-bubble ml-5 max-w-xs self-start rounded-xl bg-white bg-opacity-90 px-7 py-6 shadow-lg"
         >
-          🎶 <b>Resonate</b> with your friends, without the noise.
+          🎶 <b>ViChat</b> with your friends, without the noise.
         </div>
 
         <!-- Simulate the height of the Button -->
